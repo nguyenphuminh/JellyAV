@@ -30,6 +30,7 @@ set old_cd=%cd%
 for %%a in (!drives!) do (
 	set drive=%%a
 	!drive:\=!
+	cd /
 	for /r "!drive!" %%j in (*.*) do (
 		for /f "tokens=2" %%i in ('powershell Get-FileHash "%%j"') do set hash=%%i
 		for /f %%i in (Jelly_Database.txt) do (
@@ -40,6 +41,8 @@ for %%a in (!drives!) do (
 		)
 	)
 )
+!old_drive!
+cd !old_cd!
 pause >nul
 goto menu
 
