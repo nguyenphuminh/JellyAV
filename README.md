@@ -14,4 +14,4 @@ First of all, this is not a serious project, this is an experimental project jus
 However, if you're a Batch developer or a crappy scripter like me, then you can try it out and build your own thing if you want :)
 
 ## Resources
-I took the database from [https://github.com/anic17/Batch-Antivirus](here), be sure to check them out!
+I took the database from [here](https://github.com/anic17/Batch-Antivirus), be sure to check them out!
