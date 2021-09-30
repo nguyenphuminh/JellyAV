@@ -2,6 +2,7 @@
 setlocal EnableDelayedExpansion
 
 :menu
+color 1f
 cls
 echo Jelly Antivirus Version 0.1.0 BETA
 echo.
@@ -78,12 +79,14 @@ if exist "%target%" (
 	for /f "tokens=2" %%i in ('powershell Get-FileHash "%target%"') do set hash=%%i
 	for /f %%i in (Jelly_Database.txt) do (
 		if "!hash!" == "%%i" (
+			color 4f
 			echo "%target%" is dangerous, delete it? (Y/N^)
 			echo.
 			choice /c:yn /n >nul
 			if errorlevel 2 goto menu
 			if errorlevel 1 (
 				del /q %target%
+				color 1f
 				echo Dangerous file removed^^!
 				pause >nul
 				goto menu
@@ -96,6 +99,7 @@ pause >nul
 goto menu
 
 :utils
+color 1f
 cls
 echo Jelly Antivirus Version 0.1.0 BETA
 echo.
