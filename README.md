@@ -15,3 +15,6 @@ However, if you're a Batch developer or a crappy scripter like me, then you can 
 
 ## Resources
 I took the database from [here](https://github.com/anic17/Batch-Antivirus), be sure to check them out!
+
+## Note
+Ironically, you should turn off your already existing antivirus software as Batch files are marked as malicious, and run JellyAV as administrator for it to work properly.

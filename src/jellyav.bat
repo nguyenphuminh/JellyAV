@@ -1,17 +1,20 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+
 :menu
+
+:: Resets color
 color 1f
 cls
-echo Jelly Antivirus Version 0.1.0 BETA
+
+echo Jelly Antivirus Version 0.1.1 BETA
 echo.
 echo Options:
 echo.
-echo 1. Full scan.              (BETA)
-echo 2. Scan a directory.      (STABLE)
-echo 3. Scan a file.           (STABLE)
-echo 4. Utilities.             (STABLE)
+echo 1. Scan a directory.      (STABLE)
+echo 2. Scan a file.           (STABLE)
+echo 3. Utilities.             (STABLE)
 echo.
 choice /c:1234 /n
 if errorlevel 4 goto utils
@@ -20,44 +23,33 @@ if errorlevel 2 goto dir_scan
 if errorlevel 1 goto full_scan
 goto menu
 
-:full_scan
-cls
-set hash=
-set target=
-for /f "tokens=*" %%i in ('fsutil fsinfo drives') do set drives=%%i
-set drives=!drives:Drives: =!
-set old_drive=%cd:~0,2%
-set old_cd=%cd%
-for %%a in (!drives!) do (
-	set drive=%%a
-	!drive:\=!
-	cd /
-	for /r "!drive!" %%j in (*.*) do (
-		for /f "tokens=2" %%i in ('powershell Get-FileHash "%%j"') do set hash=%%i
-		for /f %%i in (Jelly_Database.txt) do (
-			if "!hash!" == "%%i" (
-				del /q %%j
-				echo "%%j" removed^^!
-			)
-		)
-	)
-)
-!old_drive!
-cd !old_cd!
-pause >nul
-goto menu
 
 :dir_scan
+
+:: dir_scan is the "Scan a directory" feature.
+:: It works by looping through files in a directory, then compare their file hash with the ones in the virus database.
+
 cls
+
+:: Resets target to be scanned.
 set hash=
 set target=
+
 set /p target=Drop the folder or enter the directory here (Leave blank to go back^): 
+
+:: Goes back to menu if no path was provided
 if "%target%" == "" goto menu
+
 echo.
+
+:: Start scanning if provided path exists
 if exist "%target%" (
+	:: Iterates over files in provided directory
 	for /r "%target%\" %%j in (*.*) do (
+		:: Get file hash using powershell
 		for /f "tokens=2" %%i in ('powershell Get-FileHash "%%j"') do set hash=%%i
-		for /f %%i in (Jelly_Database.txt) do (
+		:: Compare hash
+		for /f %%i in (database.txt) do (
 			if "!hash!" == "%%i" (
 				del /q %%j
 				echo "%%j" removed^^!
@@ -65,42 +57,72 @@ if exist "%target%" (
 		)
 	)
 )
+
 pause >nul
 goto menu
 
+
 :file_scan
+
+:: file_scan is the "Scan a file" feature.
+:: It is the same as "dir_scan" but with a single file only.
+
 cls
+
+:: Resets target to be scanned.
 set hash=
 set target=
+
 set /p target=Drop the file or enter the file's path here (Leave blank to go back^): 
+
+:: Goes back to menu if no path was provided
 if "%target%" == "" goto menu
+
 echo.
+
+:: Start scanning if provided path exists
 if exist "%target%" (
+	:: Get file hash using powershell
 	for /f "tokens=2" %%i in ('powershell Get-FileHash "%target%"') do set hash=%%i
-	for /f %%i in (Jelly_Database.txt) do (
+	:: Compare hash
+	for /f %%i in (database.txt) do (
 		if "!hash!" == "%%i" (
+			:: Change color to red if the file is a virus
 			color 4f
+
+			:: Prompt for deletion
 			echo "%target%" is dangerous, delete it? (Y/N^)
 			echo.
+
 			choice /c:yn /n >nul
 			if errorlevel 2 goto menu
 			if errorlevel 1 (
 				del /q %target%
 				color 1f
 				echo Dangerous file removed^^!
+
+
 				pause >nul
 				goto menu
 			)
 		)
 	)
 )
+
+:: Prompt if file is safe
 echo "%target%" is safe^^!
+
 pause >nul
 goto menu
 
 :utils
+
+:: utils is other utilities of JellyAV
+
+:: Resets color
 color 1f
 cls
+
 echo Jelly Antivirus Version 0.1.0 BETA
 echo.
 echo Utilities - Options:
@@ -108,15 +130,16 @@ echo.
 echo 1. Fix shortcut viruses.
 echo 2. Go back.
 echo.
+
 choice /c:12 /n
 if errorlevel 2 goto menu
 if errorlevel 1 (
 	cls
 	set /p util_dir=Enter directory or drop in the folder: 
 	if exist "!util_dir!" (
-		del /q "!util_dir:"=!\*.lnk"
 		attrib -s -r -h "!util_dir:"=!\*.*" /s /d /l
 		pause
 	) 
 )
+
 goto utils
