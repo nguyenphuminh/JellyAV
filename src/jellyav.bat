@@ -16,11 +16,10 @@ echo 1. Scan a directory.      (STABLE)
 echo 2. Scan a file.           (STABLE)
 echo 3. Utilities.             (STABLE)
 echo.
-choice /c:1234 /n
-if errorlevel 4 goto utils
-if errorlevel 3 goto file_scan
-if errorlevel 2 goto dir_scan
-if errorlevel 1 goto full_scan
+choice /c:123 /n
+if errorlevel 3 goto utils
+if errorlevel 2 goto file_scan
+if errorlevel 1 goto dir_scan
 goto menu
 
 
