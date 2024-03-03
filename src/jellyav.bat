@@ -8,7 +8,7 @@ setlocal EnableDelayedExpansion
 color 0f
 cls
 
-echo Jelly Antivirus Version 0.1.1 BETA
+echo Jelly Antivirus Version 0.1.2 BETA
 echo.
 echo Options:
 echo.
