@@ -5,7 +5,7 @@ setlocal EnableDelayedExpansion
 :menu
 
 :: Resets color
-color 1f
+color 0f
 cls
 
 echo Jelly Antivirus Version 0.1.1 BETA
@@ -45,17 +45,19 @@ echo.
 if exist "%target%" (
 	:: Iterates over files in provided directory
 	for /r "%target%\" %%j in (*.*) do (
-		:: Get file hash using powershell
-		for /f "tokens=2" %%i in ('powershell Get-FileHash "%%j"') do set hash=%%i
+		:: Get file hash using certutil
+		for /f "delims=" %%i in ('CertUtil -hashfile "%%j" SHA256 ^| find /v "CertUtil" ^| find /v ":"') do set hash=%%i
 		:: Compare hash
 		for /f %%i in (database.txt) do (
 			if "!hash!" == "%%i" (
-				del /q %%j
+				del /q "%%j"
 				echo "%%j" removed^^!
 			)
 		)
 	)
 )
+
+echo Scan finished^^! Press any key to continue...
 
 pause >nul
 goto menu
@@ -81,8 +83,8 @@ echo.
 
 :: Start scanning if provided path exists
 if exist "%target%" (
-	:: Get file hash using powershell
-	for /f "tokens=2" %%i in ('powershell Get-FileHash "%target%"') do set hash=%%i
+	:: Get file hash using certutil
+	for /f "delims=" %%i in ('CertUtil -hashfile "%target%" SHA256 ^| find /v "CertUtil" ^| find /v ":"') do set hash=%%i
 	:: Compare hash
 	for /f %%i in (database.txt) do (
 		if "!hash!" == "%%i" (
@@ -96,10 +98,9 @@ if exist "%target%" (
 			choice /c:yn /n >nul
 			if errorlevel 2 goto menu
 			if errorlevel 1 (
-				del /q %target%
-				color 1f
-				echo Dangerous file removed^^!
-
+				del /q "%target%"
+				color 0f
+				echo Dangerous file removed^^! Press any key to continue...
 
 				pause >nul
 				goto menu
@@ -114,12 +115,13 @@ echo "%target%" is safe^^!
 pause >nul
 goto menu
 
+
 :utils
 
 :: utils is other utilities of JellyAV
 
 :: Resets color
-color 1f
+color 0f
 cls
 
 echo Jelly Antivirus Version 0.1.0 BETA
